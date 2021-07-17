@@ -6,6 +6,9 @@ import tkinter as tk
 import locale
 import threading
 import time
+import datetime
+import dateutil as du
+from dateutil import parser
 import requests
 import json
 import traceback
@@ -129,15 +132,30 @@ class Weather(tk.Frame):
             location2 = "Brookline, MA"
             # get the correct weather station url for the latitude and longitude
             nws_points_url = f"https://api.weather.gov/points/{latitude},{longitude}"
-            nws_points = requests.get(nws_points_url).json()            
-            nws_forecast_url = nws_points['properties']['forecastHourly']
+            nws_points = requests.get(nws_points_url).json()
 
-            # pull the forecast from the national weather service
+            nws_forecast_url = nws_points['properties']['forecast']
+            nws_forecast_hourly_url = nws_points['properties']['forecastHourly']
+
             nws_forecast = requests.get(nws_forecast_url).json()['properties']['periods']
+            nws_forecast_hourly = requests.get(nws_forecast_hourly_url).json()['properties']['periods']
 
-            temperature = f"{nws_forecast[0]['temperature']}\N{DEGREE SIGN}"
-            currently = nws_forecast[0]['shortForecast']
-            forecast2 = f"{nws_forecast[1]['name']}: {nws_forecast[1]['detailedForecast']}"
+
+            temperature = f"{nws_forecast_hourly[0]['temperature']}\N{DEGREE SIGN}"
+            currently = nws_forecast_hourly[0]['shortForecast']
+
+            now =datetime.datetime.now()
+            for period in nws_forecast:
+                start = parser.parse(period['startTime'],ignoretz=True)
+                end   = parser.parse(period['endTime'],ignoretz=True)
+            #     print(start, end)
+                if end > now:
+            #         print(True)
+                    name = period['name']
+                    df = period['shortForecast']
+                    forecast2 = f"{name}: {df}"
+            #         print(forecast2)
+                    break
 
             # icon_id = 
             icon2 = None
