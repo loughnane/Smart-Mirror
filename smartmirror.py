@@ -19,8 +19,8 @@ LOCALE_LOCK = threading.Lock()
 ui_locale = '' # e.g. 'fr_FR' fro French, '' as default
 time_format = 12 # 12 or 24
 date_format = "%b %d, %Y" # check python doc for strftime() for options
-weather_lang = 'en' # see https://darksky.net/dev/docs/forecast for full list of language parameters values
-weather_unit = 'us' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
+weather_lang = 'en'
+weather_unit = 'us'
 latitude = "42.34"
 longitude = "-71.12" 
 xlarge_text_size = 94
@@ -126,11 +126,11 @@ class Weather(tk.Frame):
     def get_weather(self):
         try:
 
-            location2 = ""
+            location2 = "Brookline, MA"
             # get the correct weather station url for the latitude and longitude
             nws_points_url = f"https://api.weather.gov/points/{latitude},{longitude}"
             nws_points = requests.get(nws_points_url).json()            
-            nws_forecast_url = nws_points['properties']['forecast']
+            nws_forecast_url = nws_points['properties']['forecastHourly']
 
             # pull the forecast from the national weather service
             nws_forecast = requests.get(nws_forecast_url).json()['properties']['periods']
@@ -210,7 +210,7 @@ class News(tk.Frame):
             for post in feed.entries[0:5]:
                 headline = NewsHeadline(self.headlinesContainer, post.title)
                 headline.pack(side=tk.TOP, anchor=tk.W)
-                
+
         except Exception as e:
             traceback.print_exc()
             print (f"Error: {e}. Cannot get news.")
