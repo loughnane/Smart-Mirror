@@ -9,7 +9,7 @@ import time
 import requests
 import json
 import traceback
-import feedparser
+#import feedparser
 
 from PIL import Image, ImageTk
 from contextlib import contextmanager
