@@ -13,6 +13,7 @@ import requests
 import json
 import traceback
 import feedparser
+import os
 
 from PIL import Image, ImageTk
 from contextlib import contextmanager
@@ -42,22 +43,26 @@ def setlocale(name):  # thread proof function to work with locale
             locale.setlocale(locale.LC_ALL, saved)
 
 
+# specify path from home to repo
+home_dir = os.path.expanduser("~")
+root_path = f"{home_dir}/code/Smart-Mirror"
+
 # maps open weather icons to
 # icon reading is not impacted by the 'lang' parameter
 icon_lookup = {
-    "Mostly Sunny": "assets/Sun.png",  # clear sky day
-    "wind": "assets/Wind.png",  # wind
-    "cloudy": "assets/Cloud.png",  # cloudy day
-    "partly-cloudy-day": "assets/PartlySunny.png",  # partly cloudy day
-    "rain": "assets/Rain.png",  # rain day
-    "snow": "assets/Snow.png",  # snow day
-    "snow-thin": "assets/Snow.png",  # sleet day
-    "fog": "assets/Haze.png",  # fog day
-    "clear-night": "assets/Moon.png",  # clear sky night
-    "partly-cloudy-night": "assets/PartlyMoon.png",  # scattered clouds night
-    "thunderstorm": "assets/Storm.png",  # thunderstorm
-    "tornado": "assests/Tornado.png",  # tornado
-    "hail": "assests/Hail.png",  # hail
+    "Mostly Sunny": f"{root_path}/assets/Sun.png",  # clear sky day
+    "wind": f"{root_path}/assets/Wind.png",  # wind
+    "cloudy": f"{root_path}/assets/Cloud.png",  # cloudy day
+    "partly-cloudy-day": f"{root_path}/assets/PartlySunny.png",  # partly cloudy day
+    "rain": f"{root_path}/assets/Rain.png",  # rain day
+    "snow": f"{root_path}/assets/Snow.png",  # snow day
+    "snow-thin": f"{root_path}/assets/Snow.png",  # sleet day
+    "fog": f"{root_path}/assets/Haze.png",  # fog day
+    "clear-night": f"{root_path}/assets/Moon.png",  # clear sky night
+    "partly-cloudy-night": f"{root_path}/assets/PartlyMoon.png",  # scattered clouds night
+    "thunderstorm": f"{root_path}/assets/Storm.png",  # thunderstorm
+    "tornado": f"{root_path}/assets/Tornado.png",  # tornado
+    "hail": f"{root_path}/assets/Hail.png",  # hail
 }
 
 
@@ -264,7 +269,7 @@ class NewsHeadline(tk.Frame):
     def __init__(self, parent, event_name=""):
         tk.Frame.__init__(self, parent, bg="black")
 
-        image = Image.open("assets/Newspaper.png")
+        image = Image.open(f"{root_path}/assets/Newspaper.png")
         image = image.resize((25, 25), Image.ANTIALIAS)
         image = image.convert("RGB")
         photo = ImageTk.PhotoImage(image)
