@@ -19,20 +19,21 @@ from contextlib import contextmanager
 
 LOCALE_LOCK = threading.Lock()
 
-ui_locale = '' # e.g. 'fr_FR' fro French, '' as default
-time_format = 12 # 12 or 24
-date_format = "%b %d, %Y" # check python doc for strftime() for options
-weather_lang = 'en'
-weather_unit = 'us'
+ui_locale = ""  # e.g. 'fr_FR' fro French, '' as default
+time_format = 12  # 12 or 24
+date_format = "%b %d, %Y"  # check python doc for strftime() for options
+weather_lang = "en"
+weather_unit = "us"
 latitude = "42.34"
-longitude = "-71.12" 
+longitude = "-71.12"
 xlarge_text_size = 94
 large_text_size = 48
 medium_text_size = 28
 small_text_size = 18
 
+
 @contextmanager
-def setlocale(name): #thread proof function to work with locale
+def setlocale(name):  # thread proof function to work with locale
     with LOCALE_LOCK:
         saved = locale.setlocale(locale.LC_ALL)
         try:
@@ -40,53 +41,64 @@ def setlocale(name): #thread proof function to work with locale
         finally:
             locale.setlocale(locale.LC_ALL, saved)
 
+
 # maps open weather icons to
 # icon reading is not impacted by the 'lang' parameter
 icon_lookup = {
-    'Mostly Sunny': "assets/Sun.png",  # clear sky day
-    'wind': "assets/Wind.png",   #wind
-    'cloudy': "assets/Cloud.png",  # cloudy day
-    'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
-    'rain': "assets/Rain.png",  # rain day
-    'snow': "assets/Snow.png",  # snow day
-    'snow-thin': "assets/Snow.png",  # sleet day
-    'fog': "assets/Haze.png",  # fog day
-    'clear-night': "assets/Moon.png",  # clear sky night
-    'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
-    'thunderstorm': "assets/Storm.png",  # thunderstorm
-    'tornado': "assests/Tornado.png",    # tornado
-    'hail': "assests/Hail.png"  # hail
+    "Mostly Sunny": "assets/Sun.png",  # clear sky day
+    "wind": "assets/Wind.png",  # wind
+    "cloudy": "assets/Cloud.png",  # cloudy day
+    "partly-cloudy-day": "assets/PartlySunny.png",  # partly cloudy day
+    "rain": "assets/Rain.png",  # rain day
+    "snow": "assets/Snow.png",  # snow day
+    "snow-thin": "assets/Snow.png",  # sleet day
+    "fog": "assets/Haze.png",  # fog day
+    "clear-night": "assets/Moon.png",  # clear sky night
+    "partly-cloudy-night": "assets/PartlyMoon.png",  # scattered clouds night
+    "thunderstorm": "assets/Storm.png",  # thunderstorm
+    "tornado": "assests/Tornado.png",  # tornado
+    "hail": "assests/Hail.png",  # hail
 }
 
 
 font = "Helvetica"
 
+
 class Clock(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
-
-        tk.Frame.__init__(self, parent, bg='black')
+        tk.Frame.__init__(self, parent, bg="black")
         # initialize time label
-        self.time1 = ''
-        self.timeLbl = tk.Label(self, font=(font, large_text_size), fg="white", bg="black")
+        self.time1 = ""
+        self.timeLbl = tk.Label(
+            self, font=(font, large_text_size), fg="white", bg="black"
+        )
         self.timeLbl.pack(side=tk.TOP, anchor=tk.E)
         # initialize day of week
-        self.day_of_week1 = ''
-        self.dayOWLbl = tk.Label(self, text=self.day_of_week1, font=(font, small_text_size), fg="white", bg="black")
+        self.day_of_week1 = ""
+        self.dayOWLbl = tk.Label(
+            self,
+            text=self.day_of_week1,
+            font=(font, small_text_size),
+            fg="white",
+            bg="black",
+        )
         self.dayOWLbl.pack(side=tk.TOP, anchor=tk.E)
         # initialize date label
-        self.date1 = ''
-        self.dateLbl = tk.Label(self, text=self.date1, font=(font, small_text_size), fg="white", bg="black")
+        self.date1 = ""
+        self.dateLbl = tk.Label(
+            self, text=self.date1, font=(font, small_text_size), fg="white", bg="black"
+        )
         self.dateLbl.pack(side=tk.TOP, anchor=tk.E)
         self.tick()
 
     def tick(self):
         with setlocale(ui_locale):
             if time_format == 12:
-                time2 = time.strftime('%I:%M %p') #hour in 12h format
+                time2 = time.strftime("%I:%M %p")  # hour in 12h format
             else:
-                time2 = time.strftime('%H:%M') #hour in 24h format
+                time2 = time.strftime("%H:%M")  # hour in 24h format
 
-            day_of_week2 = time.strftime('%A')
+            day_of_week2 = time.strftime("%A")
             date2 = time.strftime(date_format)
             # if time string has changed, update it
             if time2 != self.time1:
@@ -106,58 +118,68 @@ class Clock(tk.Frame):
 
 class Weather(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
-        tk.Frame.__init__(self, parent, bg='black')
-        self.temperature = ''
-        self.forecast = ''
-        self.location = ''
-        self.currently = ''
-        self.icon = ''
+        tk.Frame.__init__(self, parent, bg="black")
+        self.temperature = ""
+        self.forecast = ""
+        self.location = ""
+        self.currently = ""
+        self.icon = ""
         self.degreeFrm = tk.Frame(self, bg="black")
         self.degreeFrm.pack(side=tk.TOP, anchor=tk.W)
-        self.temperatureLbl = tk.Label(self.degreeFrm, font=(font, xlarge_text_size), fg="white", bg="black")
+        self.temperatureLbl = tk.Label(
+            self.degreeFrm, font=(font, xlarge_text_size), fg="white", bg="black"
+        )
         self.temperatureLbl.pack(side=tk.LEFT, anchor=tk.N)
         self.iconLbl = tk.Label(self.degreeFrm, bg="black")
         self.iconLbl.pack(side=tk.LEFT, anchor=tk.N, padx=20)
-        self.currentlyLbl = tk.Label(self, font=(font, medium_text_size), fg="white", bg="black")
+        self.currentlyLbl = tk.Label(
+            self, font=(font, medium_text_size), fg="white", bg="black"
+        )
         self.currentlyLbl.pack(side=tk.TOP, anchor=tk.W)
-        self.forecastLbl = tk.Label(self, font=(font, small_text_size), fg="white", bg="black")
+        self.forecastLbl = tk.Label(
+            self, font=(font, small_text_size), fg="white", bg="black"
+        )
         self.forecastLbl.pack(side=tk.TOP, anchor=tk.W)
-        self.locationLbl = tk.Label(self, font=(font, small_text_size), fg="white", bg="black")
+        self.locationLbl = tk.Label(
+            self, font=(font, small_text_size), fg="white", bg="black"
+        )
         self.locationLbl.pack(side=tk.TOP, anchor=tk.W)
         self.get_weather()
 
     def get_weather(self):
         try:
-
             location2 = "Brookline, MA"
             # get the correct weather station url for the latitude and longitude
             nws_points_url = f"https://api.weather.gov/points/{latitude},{longitude}"
             nws_points = requests.get(nws_points_url).json()
 
-            nws_forecast_url = nws_points['properties']['forecast']
-            nws_forecast_hourly_url = nws_points['properties']['forecastHourly']
+            nws_forecast_url = nws_points["properties"]["forecast"]
+            nws_forecast_hourly_url = nws_points["properties"]["forecastHourly"]
 
-            nws_forecast = requests.get(nws_forecast_url).json()['properties']['periods']
-            nws_forecast_hourly = requests.get(nws_forecast_hourly_url).json()['properties']['periods']
-
+            nws_forecast = requests.get(nws_forecast_url).json()["properties"][
+                "periods"
+            ]
+            nws_forecast_hourly = requests.get(nws_forecast_hourly_url).json()[
+                "properties"
+            ]["periods"]
 
             temperature = f"{nws_forecast_hourly[0]['temperature']}\N{DEGREE SIGN}"
-            currently = nws_forecast_hourly[0]['shortForecast']
+            currently = nws_forecast_hourly[0]["shortForecast"]
 
-            now =datetime.datetime.now()
+            now = datetime.datetime.now()
             for period in nws_forecast:
-                start = parser.parse(period['startTime'],ignoretz=True)
-                end   = parser.parse(period['endTime'],ignoretz=True)
-            #     print(start, end)
+                start = parser.parse(period["startTime"], ignoretz=True)
+                end = parser.parse(period["endTime"], ignoretz=True)
+                #     print(start, end)
                 if end > now:
-            #         print(True)
-                    name = period['name']
-                    df = period['shortForecast']
+                    #         print(True)
+                    name = period["name"]
+                    df = period["shortForecast"]
                     forecast2 = f"{name}: {df}"
-            #         print(forecast2)
+                    #         print(forecast2)
                     break
 
-            # icon_id = 
+            # icon_id =
             icon2 = None
             print(currently)
             if currently in icon_lookup:
@@ -168,14 +190,14 @@ class Weather(tk.Frame):
                     self.icon = icon2
                     image = Image.open(icon2)
                     image = image.resize((100, 100), Image.ANTIALIAS)
-                    image = image.convert('RGB')
+                    image = image.convert("RGB")
                     photo = ImageTk.PhotoImage(image)
 
                     self.iconLbl.config(image=photo)
                     self.iconLbl.image = photo
             else:
                 # remove image
-                self.iconLbl.config(image='')
+                self.iconLbl.config(image="")
 
             if self.currently != currently:
                 self.currently = currently
@@ -207,9 +229,11 @@ class Weather(tk.Frame):
 class News(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
-        self.config(bg='black')
-        self.title = 'News' # 'News' is more internationally generic
-        self.newsLbl = tk.Label(self, text=self.title, font=(font, medium_text_size), fg="white", bg="black")
+        self.config(bg="black")
+        self.title = "News"  # 'News' is more internationally generic
+        self.newsLbl = tk.Label(
+            self, text=self.title, font=(font, medium_text_size), fg="white", bg="black"
+        )
         self.newsLbl.pack(side=tk.TOP, anchor=tk.W)
         self.headlinesContainer = tk.Frame(self, bg="black")
         self.headlinesContainer.pack(side=tk.TOP)
@@ -231,41 +255,49 @@ class News(tk.Frame):
 
         except Exception as e:
             traceback.print_exc()
-            print (f"Error: {e}. Cannot get news.")
+            print(f"Error: {e}. Cannot get news.")
 
         self.after(600000, self.get_headlines)
 
 
 class NewsHeadline(tk.Frame):
     def __init__(self, parent, event_name=""):
-        tk.Frame.__init__(self, parent, bg='black')
+        tk.Frame.__init__(self, parent, bg="black")
 
         image = Image.open("assets/Newspaper.png")
         image = image.resize((25, 25), Image.ANTIALIAS)
-        image = image.convert('RGB')
+        image = image.convert("RGB")
         photo = ImageTk.PhotoImage(image)
 
-        self.iconLbl = tk.Label(self, bg='black', image=photo)
+        self.iconLbl = tk.Label(self, bg="black", image=photo)
         self.iconLbl.image = photo
         self.iconLbl.pack(side=tk.LEFT, anchor=tk.N)
 
         self.eventName = event_name
-        self.eventNameLbl = tk.Label(self, text=self.eventName, font=(font, small_text_size), fg="white", bg="black")
+        self.eventNameLbl = tk.Label(
+            self,
+            text=self.eventName,
+            font=(font, small_text_size),
+            fg="white",
+            bg="black",
+        )
         self.eventNameLbl.pack(side=tk.LEFT, anchor=tk.N)
 
 
 class Calendar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
-        tk.Frame.__init__(self, parent, bg='black')
-        self.title = 'Calendar Events'
-        self.calendarLbl = tk.Label(self, text=self.title, font=(font, medium_text_size), fg="white", bg="black")
+        tk.Frame.__init__(self, parent, bg="black")
+        self.title = "Calendar Events"
+        self.calendarLbl = tk.Label(
+            self, text=self.title, font=(font, medium_text_size), fg="white", bg="black"
+        )
         self.calendarLbl.pack(side=tk.TOP, anchor=tk.E)
-        self.calendarEventContainer = tk.Frame(self, bg='black')
+        self.calendarEventContainer = tk.Frame(self, bg="black")
         self.calendarEventContainer.pack(side=tk.TOP, anchor=tk.E)
         self.get_events()
 
     def get_events(self):
-        #TODO: implement this method
+        # TODO: implement this method
         # reference https://developers.google.com/google-apps/calendar/quickstart/python
 
         # remove all children
@@ -279,21 +311,26 @@ class Calendar(tk.Frame):
 
 class CalendarEvent(tk.Frame):
     def __init__(self, parent, event_name="Event 1"):
-        tk.Frame.__init__(self, parent, bg='black')
+        tk.Frame.__init__(self, parent, bg="black")
         self.eventName = event_name
-        self.eventNameLbl = tk.Label(self, text=self.eventName, font=(font, small_text_size), fg="white", bg="black")
+        self.eventNameLbl = tk.Label(
+            self,
+            text=self.eventName,
+            font=(font, small_text_size),
+            fg="white",
+            bg="black",
+        )
         self.eventNameLbl.pack(side=tk.TOP, anchor=tk.E)
 
 
 class FullscreenWindow:
-
     def __init__(self):
         self.tk = tk.Tk()
-        self.tk.configure(background='black')
-        self.topFrame = tk.Frame(self.tk, background = 'black')
-        self.bottomFrame = tk.Frame(self.tk, background = 'black')
-        self.topFrame.pack(side = tk.TOP, fill=tk.BOTH, expand = tk.YES)
-        self.bottomFrame.pack(side = tk.BOTTOM, fill=tk.BOTH, expand = tk.YES)
+        self.tk.configure(background="black")
+        self.topFrame = tk.Frame(self.tk, background="black")
+        self.bottomFrame = tk.Frame(self.tk, background="black")
+        self.topFrame.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
+        self.bottomFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
         self.state = False
         self.tk.bind("<Return>", self.toggle_fullscreen)
         self.tk.bind("<Escape>", self.end_fullscreen)
@@ -309,6 +346,7 @@ class FullscreenWindow:
         # calender - removing for now
         # self.calender = Calendar(self.bottomFrame)
         # self.calender.pack(side = tk.RIGHT, anchor=tk.S, padx=100, pady=60)
+        self.toggle_fullscreen()
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
@@ -320,6 +358,7 @@ class FullscreenWindow:
         self.tk.attributes("-fullscreen", False)
         return "break"
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     w = FullscreenWindow()
     w.tk.mainloop()
