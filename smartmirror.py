@@ -270,7 +270,11 @@ class NewsHeadline(tk.Frame):
         tk.Frame.__init__(self, parent, bg="black")
 
         image = Image.open(f"{root_path}/assets/Newspaper.png")
-        image = image.resize((25, 25), Image.Resampling.LANCZOS)
+        try:
+            image = image.resize((25, 25), Image.Resampling.LANCZOS)
+        except:
+            image = image.resize((25, 25), Image.ANTIALIAS)
+
         image = image.convert("RGB")
         photo = ImageTk.PhotoImage(image)
 
